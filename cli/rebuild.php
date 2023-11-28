@@ -44,5 +44,5 @@ where f.shortname = 'organisation_name'
     $user = core_user::get_user($usertofix->id);
     $user->city = $usertofix->data;
     echo "updating user " . fullname($user);
-    user_update_user($user);
+    user_update_user($user, false);
 }

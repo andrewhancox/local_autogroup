@@ -34,8 +34,14 @@ define('LOG_MANAGER_CLASS', '\core\log\dummy_manager');
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
 
-foreach ($DB->get_recordset_select('user', "deleted = 0 and username <> 'guest'") as $user) {
-    echo "Rebuilding groups for $user->username\n";
-    $usecase = new \local_autogroup\usecase\verify_user_group_membership($user, $DB);
-    $usecase->invoke();
+foreach ($DB->get_recordset_sql("select u.*, uid.data
+from {user_info_field} f
+         inner join {user_info_data} uid on f.id = uid.fieldid
+         inner join {user} u on u.id = uid.userid
+where f.shortname = 'organisation_name'
+  and u.city = '' <> uid.data and uid.data <> '' and uid.data is not null", []) as $usertofix) {
+    $user = core_user::get_user($usertofix->id);
+    $user->city = $usertofix->data;
+    echo "updating user " . fullname($user);
+    user_update_user($user);
 }

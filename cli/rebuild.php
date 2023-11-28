@@ -33,6 +33,7 @@ define('LOG_MANAGER_CLASS', '\core\log\dummy_manager');
 
 require(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir . '/clilib.php');
+require_once($CFG->dirroot . '/user/lib.php');
 
 foreach ($DB->get_recordset_sql("select u.*, uid.data
 from {user_info_field} f
